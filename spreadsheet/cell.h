@@ -3,17 +3,18 @@
 #include "common.h"
 #include "formula.h"
 
-#include <functional>
 #include <unordered_set>
 
-class Sheet;
+namespace CellImpl {
+struct Impl;
+}
 
 class Cell : public CellInterface {
 public:
-    Cell(Sheet& sheet);
+    Cell(SheetInterface&);
     ~Cell();
 
-    void Set(std::string text);
+    void Set(std::string);
     void Clear();
 
     Value GetValue() const override;
@@ -23,14 +24,16 @@ public:
     bool IsReferenced() const;
 
 private:
-    class Impl;
-    class EmptyImpl;
-    class TextImpl;
-    class FormulaImpl;
+    void ClearCache(); // очищает кэш ячеек, ссылающихся на эту
+    void RemoveReferences(); // удаляет ссылки на эту ячейку у всех ссылаемых ячеек
+    void AddReferences(const std::vector<Position>&);
 
-    std::unique_ptr<Impl> impl_;
+    bool HasCircularDependency(const std::unordered_set<const Cell*>&) const;
+    bool HasCircularDependency(const std::vector<Position>&) const;
 
-    // Добавьте поля и методы для связи с таблицей, проверки циклических 
-    // зависимостей, графа зависимостей и т. д.
+    SheetInterface& sheet_;
+    std::unique_ptr<CellImpl::Impl> impl_;
 
+    std::unordered_set<Cell*> referrers_; // ячейки, ссылающиеся на эту
+    std::unordered_set<Cell*> referees_; // ячейки, на которые эта ссылается
 };
