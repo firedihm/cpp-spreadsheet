@@ -28,5 +28,5 @@ private:
         }
     };
 
-	mutable std::unordered_map<Position, std::unique_ptr<Cell>, CellHasher> cells_;
+    mutable std::unordered_map<Position, std::unique_ptr<Cell>, CellHasher> cells_;
 };
