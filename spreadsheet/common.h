@@ -39,7 +39,7 @@ public:
     enum class Category {
         Ref,    // ссылка на ячейку с некорректной позицией
         Value,  // ячейка не может быть трактована как число
-        Div0,  // в результате вычисления возникло деление на ноль
+        Arithmetic,  // некорректная арифметическая операция
     };
 
     FormulaError(Category category);
@@ -124,8 +124,8 @@ public:
 
     // Возвращает значение ячейки.
     // Если ячейка пуста, может вернуть nullptr.
-    virtual const CellInterface* GetCell(Position pos) const = 0;
     virtual CellInterface* GetCell(Position pos) = 0;
+    virtual const CellInterface* GetCell(Position pos) const = 0;
 
     // Очищает ячейку.
     // Последующий вызов GetCell() для этой ячейки вернёт либо nullptr, либо
